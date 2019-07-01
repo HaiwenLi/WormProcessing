@@ -9,7 +9,7 @@ classdef WormMNs
     end % end of properties
     
     methods
-        function neuron_index = GetNeuronIndex(obj, neuron_type, neuron_list)
+        function neuron_index = GetNeuronIndex(obj, neuron_list, neuron_type)
             % neuron list must be cell
             neuron_type = upper(neuron_type);
             found_type = 0;

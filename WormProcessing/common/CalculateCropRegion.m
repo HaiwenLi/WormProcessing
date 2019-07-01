@@ -17,4 +17,5 @@ y_max = min(max(worm_row) + margin, height);
 x_min = max(min(worm_column) - margin, 1);
 x_max = min(max(worm_column) + margin, width);
 region = [y_min, y_max, x_min, x_max];
+
 end

@@ -3,5 +3,6 @@ function L = Boundary_Length(start_index,end_index,boundary)
 
 arc_len = (boundary(start_index+1:end_index,:)-boundary(start_index:end_index-1,:)).^2;
 L = sqrt(sum(arc_len.^2,2));
+
 end
     

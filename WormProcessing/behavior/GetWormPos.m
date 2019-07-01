@@ -51,7 +51,8 @@ for i=1:length(res_time)
     
     stage_status(i,:) = res.stageStatus';
     stage_pos(i,:) = pos;
-    image_offset(i,:) = res.imageOffset;
+    image_offset(i,:) = res.imageOffset; % worm offset to the center of behavior image
+%     image_offset(i,:) = [0,0];
     worm_trajectory(i,:) =  res.imageOffset - IMAGE_TO_STAGE_XY*pos; %pixel
 end
 

@@ -1,4 +1,4 @@
-function MakeFluoVideo(Folder,frame_seq,map_range,frame_rate,channel,video_name)
+function MakeFluoVideo(Folder,channel,frame_seq,map_range,frame_rate,video_name)
 % Make fluorescence video for single channel
 % 
 % Input parameters: 
@@ -20,7 +20,7 @@ if channel == 'r'
 elseif channel == 'g'
     channel = 2;
     Image_Folder = [Folder 'GCaMP\'];
-    Map_Folder = [Folder 'GCaMP_Mapped']
+    Map_Folder = [Folder 'GCaMP_Mapped'];
 else
     disp('Invalid channel, only taking from {r,g}');
     return;
@@ -40,7 +40,7 @@ image_name_prefix = Images_Seq.image_name_prefix;
 % Start to produce the video
 writerObj = VideoWriter([video_name '.avi']);
 writerObj.FrameRate = frame_rate;
-writerObj.Quality = 90;
+% writerObj.Quality = 90;
 open(writerObj);
 
 total_num = length(frame_seq);
@@ -69,6 +69,6 @@ for i=1:length(frame_seq)
 end
 close(writerObj);
 
-% Convert AVI video into MP4
-ConvertAVIToMP4([[video_name '.avi']]);
+% % Convert AVI video into MP4
+% ConvertAVIToMP4([[video_name '.avi']]);
 end

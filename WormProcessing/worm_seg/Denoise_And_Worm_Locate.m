@@ -3,11 +3,11 @@ function [binary_image, worm_xy_range, worm_area] =...
 % remove the noise outside and inside worm body
 
 % define the hole (because of worm touched itself) area portition to the whole worm area
-hole_portition = 0.05; 
-hole_area = worm_area*hole_portition;
+% hole_portition = 0.05; 
+% hole_area = worm_area*hole_portition;
 
 % ---------------------选择线虫区域，并去除图中杂点-------------------
-[height,width] = size(binary_image_whole);
+[height,~] = size(binary_image_whole);
 cc = bwconncomp(binary_image_whole);
 worm_index = 1;
 if cc.NumObjects > 1
@@ -30,7 +30,7 @@ worm_row = mod(worm, height);
 worm_column = ceil(worm / height);
 
 % 计算线虫所在区域的首末行以及首末列
-margin = 4;
+margin = 10;
 row_min = max(min(worm_row) - margin, 1);
 row_max = min(max(worm_row) + margin, height);
 column_min = max(min(worm_column) - margin, 1);
@@ -43,7 +43,7 @@ worm_xy_range = [row_min, row_max, column_min, column_max];
 % binary_image = binary_image_whole;
 % worm_xy_range= [1,height,1,width];
 
-% ----------------------填充线虫区域内部的空白杂点-----------------------
-binary_image = ~bwareaopen(~binary_image, floor(hole_area));
-worm_area = length(find(binary_image == 1));
+% % ----------------------填充线虫区域内部的空白杂点-----------------------
+% binary_image = ~bwareaopen(~binary_image, floor(hole_area));
+% worm_area = length(find(binary_image == 1));
 end

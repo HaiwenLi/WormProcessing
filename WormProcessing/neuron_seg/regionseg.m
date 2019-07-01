@@ -8,7 +8,8 @@ tmp = zeros(size(img));
 [height,width] = size(img);
 label = 1;
 a = 1.5;
-br = 2;
+br = dist_thres;
+region_ratio = 0.2;
 
 for i=1:seed_num
     sr = seed_points(i,1);
@@ -38,15 +39,22 @@ for i=1:seed_num
 %         min(small_region(nonzero_index));
     I_Dif = small_region(nonzero_index) - seedvalue;
     T = mean(abs(I_Dif));
-    TI = (region_img>0) & (abs(region_img - seedvalue)<=a*T);
-    % 保证TI的连通性
+    
+    % 如果small region的选择已经覆盖了整个区域
+    if T <= region_ratio * seedvalue
+        TI = zeros(size(region_img));
+        TI(sr-br:sr+br,sc-br:sc+br) = small_region;
+        TI( TI > 0) = 1; % non-zero index
+    else
+        TI = (region_img>0) & (abs(region_img - seedvalue)<=a*T);
+    end
+     % 保证TI的连通性
     TI = extract_maxconncomp(TI);
     
     tmp(:,:) = 0;
-    tmp(min_r:max_r,min_c:max_c) = TI;
     tmp(min_r:max_r,min_c:max_c) = TI*label;
     g = g+tmp;%将像素叠加到label图像中，而不是block赋值，这样会将原先的值覆盖
-    g(g>label) = 0;%将重合的部分溶解
+    g(g>label) = label;%将重合的部分溶解，认为是最新添加的内容
     label = label+1;
 end
 end

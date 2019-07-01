@@ -1,28 +1,26 @@
-function MakeNeuronTrackingVideo(Folder, frame_seq, NeuronPos_File, Neuron_Num, map_range, frame_rate, channel, video_name)
+function MakeNeuronTrackingVideo(Folder, channel, frame_seq, map_range, frame_rate, video_name)
 % Make fluorescence video with tracked neurons in GCaMP/RFP images
 % 
 % Input parameters: 
 % Folder:      The folder containg GCaMP and RFP images
 % frame_seq:   image sequence needed to be made into video, default is 1:N
-% NeuronPos_File, Neuron_Num
 % map_range: data range when mapping 16-bit image into 8-bit image
 % channel:    image channel, taking value from {'r','g'}
 % video_name: output name of the fluorescent video
 
 image_format = '.tiff';
-Src_Folder = 'K:\FluoImages\';
-Deconved_Folder = 'K:\Deconved\';
-
-if channel == 'r'
+if strcmp(channel, 'r') == 1 || strcmp(channel, 'red') == 1
     channel = 1;
-    Image_Folder = [Src_Folder Folder 'RFP\'];
-    Map_Folder = [Src_Folder Folder 'RFP_Mapped'];
-elseif channel == 'g'
+    Image_Folder = [Folder 'RFP\'];
+    Map_Folder = [Folder 'RFP_Mapped'];
+    NeuronPos_File = [Folder 'neuron_pos\red.txt'];
+elseif strcmp(channel, 'g') == 1 || strcmp(channel, 'green') == 1
     channel = 2;
-    Image_Folder = [Src_Folder Folder 'GCaMP\'];
-    Map_Folder = [Src_Folder Folder 'GCaMP_Mapped']
+    Image_Folder = [Folder 'GCaMP\'];
+    Map_Folder = [Folder 'GCaMP_Mapped'];
+    NeuronPos_File = [Folder 'neuron_pos\green.txt'];
 else
-    disp('Invalid channel, only taking from {r,g}');
+    disp('Invalid channel, only taking from {r/red,g/green}');
     return;
 end
 
@@ -43,16 +41,24 @@ image_time = Images_Seq.image_time;
 image_name_prefix = Images_Seq.image_name_prefix;
 
 % Load neuron positions from the file
+if ~exist(NeuronPos_File, 'file')
+    disp(['No neuron position file in ' Folder '\neuron_pos\']);
+    return;
+end
+
 Neuron_Pos = load(NeuronPos_File);
+neuron_radius = load([Folder 'neuron_pos\neuron_radius.txt']);
+Neuron_Num = length(neuron_radius);
 disp('Load GCaMP neuron positions, starting to generate neuron tracking video');
 
 % Start to make the video
 writerObj = VideoWriter([video_name '.avi']);
 writerObj.FrameRate = frame_rate;
-writerObj.Quality = 90;
+% writerObj.Quality = 90;
 open(writerObj);
 
 total_num = length(frame_seq);
+rgb_map_image = zeros(2048,2048,3);
 for i=1:length(frame_seq)
     disp(['Processing: ' num2str(i) '/' num2str(total_num)]);
 
@@ -71,8 +77,8 @@ for i=1:length(frame_seq)
     % Draw the tracked neurons in GCaMP and RFP images, respectively
     % Draw neuron in image
     color = 'white'; % Now color only can be white, red, green, blue.
-    neuron_radius = 4;
-    intensity_ratio = 0.25;
+    %intensity_ratio = 0.25;
+    rgb_map_image(:,:,:) = 0;
     rgb_map_image(:,:,channel) = mapped_image;
     
     % Add neuron labels in image
@@ -81,10 +87,10 @@ for i=1:length(frame_seq)
     rgb_map_image = DrawNeuronsInRGBImage(rgb_map_image,neuron_pos,neuron_radius,color);
     
     % write data into video
-    writeVideo(writerObj,rgb_map_image); 
+    writeVideo(writerObj,uint8(rgb_map_image)); 
 end
 close(writerObj);
 
-% Convert AVI video into MP4
-ConvertAVIToMP4([[video_name '.avi']]);
+% % Convert AVI video into MP4
+% ConvertAVIToMP4([[video_name '.avi']]);
 end

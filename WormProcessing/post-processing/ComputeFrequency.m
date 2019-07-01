@@ -13,8 +13,8 @@ elseif mod(N,2) == 0  % N is even
     center = N/2 + 1;
     offset = 1;
 end
-half_signal = fft_activity(center:end);
-half_signal(1) = 0; % remove center signal
+half_signal = fft_activity(center+1:end);
+%half_signal(1) = 0; % remove center signal
 half_len = find(half_signal == max(half_signal));
 freq = (half_len-offset)/(N*delta_time);
 

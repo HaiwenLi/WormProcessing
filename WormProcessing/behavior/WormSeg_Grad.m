@@ -3,9 +3,11 @@ function [binary_whole,worm_area] = WormSeg_Grad(img, worm_area)
 
 % Paramters
 Grad_Threshold_1 = 40;
-Grad_Threshold_2 = 5;
+Grad_Threshold_2 = 2;
 hole_p = 0.04;
-Binary_Threshold = 32;
+Binary_Threshold = 28;
+
+img = medfilt2(img,[5,5]);
 
 % Worm segmentation
 image = double(img);
@@ -32,22 +34,23 @@ se = strel('disk',2);
 grad_binary_img1 = grad_smooth > Grad_Threshold_1;
 grad_binary_img1 = imclose(grad_binary_img1,se);
 grad_binary_img2 = grad_smooth > Grad_Threshold_2;
-grad_diff = grad_binary_img2 - grad_binary_img1;
-% figure;imagesc(grad_diff);axis image;
-
-dist_matrix = bwdist(~grad_binary_img2);
-boundary_img = dist_matrix <= 2;
-fill_part = grad_diff & ~boundary_img;
-fill_part = bwareaopen(fill_part, 15);
-% figure;imagesc(fill_part);axis image;
-
-se = strel('disk',3);
-fill_part = imclose(fill_part,se);
-% figure;imagesc(fill_part);axis image;
-
-binary_img = grad_binary_img1 | fill_part;
+% % grad_diff = grad_binary_img2 - grad_binary_img1;
+% % % figure;imagesc(grad_diff);axis image;
+% % 
+% % dist_matrix = bwdist(~grad_binary_img2);
+% % boundary_img = dist_matrix <= 2;
+% % fill_part = grad_diff & ~boundary_img;
+% % fill_part = bwareaopen(fill_part, 15);
+% % % figure;imagesc(fill_part);axis image;
+% % 
+% % se = strel('disk',3);
+% % fill_part = imclose(fill_part,se);
+% % % figure;imagesc(fill_part);axis image;
+% % 
+% % binary_img = grad_binary_img1 | fill_part;
 % se = strel('disk',2);
 % binary_img = imclose(binary_img,se);
+binary_img = grad_binary_img2;
 hole_area = worm_area*hole_p;
 binary_img = ~bwareaopen(~binary_img, floor(hole_area));
 %     se = strel('disk',2);
@@ -83,12 +86,11 @@ binary_img = ~bwareaopen(~binary_img, floor(hole_area));
    
 se = strel('disk',2);
 binary_whole = false(size(image));
-binary_whole(region_range(1):region_range(2),region_range(3):region_range(4))=...
-   binary_img; 
+binary_whole(region_range(1):region_range(2),region_range(3):region_range(4))= binary_img; 
 binary_whole = imclose(binary_whole,se);
-binary_whole = imerode(binary_whole,strel('disk',1));
+% binary_whole = imerode(binary_whole,strel('disk',1));
 binary_whole = imopen(binary_whole,se);
-binary_img = binary_whole(region_range(1):region_range(2),region_range(3):region_range(4));
+% binary_img = binary_whole(region_range(1):region_range(2),region_range(3):region_range(4));
 % figure;imagesc(part_img - binary_img.*part_img);axis image;
 % figure;imagesc(image - binary_whole.*image);axis image;colormap(gray);
 

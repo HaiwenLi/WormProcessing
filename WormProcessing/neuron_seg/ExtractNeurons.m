@@ -1,8 +1,22 @@
-function ExtractNeurons(Folder,OutFolder,frame_seq)
+function ExtractNeurons(Folder,channel,frame_seq)
 % Extract neurons from image in Folder
 
-image_format = 'tiff';
-image_names = dir([Folder '*.' image_format]);
+channel = lower(channel);
+if strcmp(channel,'g')==1 || strcmp(channel,'green')==1
+    ImgFolder = [Folder 'GCaMP\'];
+    OutFolder = [Folder 'GCaMP_Neuron\'];
+elseif strcmp(channel,'r')==1 || strcmp(channel,'red')==1
+    ImgFolder = [Folder 'RFP\'];
+    OutFolder = [Folder 'RFP_Neuron\'];
+end
+if ~exist(OutFolder,'dir')
+    mkdir(OutFolder);
+end
+
+image_format = '.tiff';
+img_seq = GetImageSeq(ImgFolder,image_format);
+image_time = img_seq.image_time;
+image_prefix = img_seq.image_name_prefix;
 
 if strcmp(frame_seq, 'all') == 1
     frame_seq = 1:length(image_names);
@@ -10,10 +24,10 @@ end
 
 tic
 for i=1:length(frame_seq)
-	image_name = image_names(frame_seq(i)).name;
+	image_name = [image_prefix num2str(image_time(frame_seq(i))) image_format];
     disp([num2str(frame_seq(i)) ': ' image_name]);
     
-	img = imread([Folder image_name]);
+	img = imread([ImgFolder image_name]);
 
 	% Extract neurons in image
 	[worm_region,neurons,intensities] = ExtractNeuronInImage(img);

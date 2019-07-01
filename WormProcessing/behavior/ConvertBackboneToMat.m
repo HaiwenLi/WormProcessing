@@ -9,7 +9,8 @@ for i=Start_Index:End_Index
 	backbone_name = [Folder 'backbone\backbone_' num2str(i) '.bin'];
 	backbone = LoadCenterlineResults(backbone_name);
 
-	if ~backbone.length_error
+    length_error = backbone.length_error;
+	if ~length_error
 		centerline = backbone.current_backbone;
     else
         centerline = backbone.last_backbone;

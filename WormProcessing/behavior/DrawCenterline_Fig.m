@@ -28,7 +28,7 @@ for i=1:length(frame_seq)
         continue;
     end
     data = load(centerline_name);
-    centerline = data.centerline;
+    centerline = data.res.centerline;
     
 %     % add worm region to centerline
 %     centerline = centerline + ...
@@ -50,7 +50,8 @@ for i=1:length(frame_seq)
 %         'LineWidth',line_width);
     title(['Image ' num2str(index)]);
     hold off;
-    saveas(gcf,[Folder 'fig\Fig_' num2str(index) '.tiff']);
+    %saveas(gcf,[Folder 'fig\Fig_' num2str(index) '.tiff']);
+    saveas(gcf,[Folder 'fig\' prefix num2str(image_time(index)) image_format]);
 end
 end
 

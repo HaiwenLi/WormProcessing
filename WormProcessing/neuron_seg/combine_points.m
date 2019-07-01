@@ -22,7 +22,7 @@ while true
             flag(near_index) = 1;
             % 只考虑点的几何位置
             % points(near_index(1),:) = mean(points(near_index,:));
-            % 只考虑最值最大的点
+            % 只考虑最大值的点
             maxvalue_index = find(values(near_index)==max(values(near_index)),1);
             points(near_index(1),:) = points(list(maxvalue_index(1)),:);
             

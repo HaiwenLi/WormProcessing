@@ -1,4 +1,3 @@
-% function sync_names = SyncFluoBehaviorImages(Fluo_Seq,Fluo_CaliTime,Beha_Seq,Beha_CaliTime)
 function sync_struc = SyncFluoBehaviorImages(Fluo_Seq,Fluo_CaliTime,Beha_Seq,Beha_CaliTime)
 % 同步荧光图像和行为图像。使用时间配准后，确定每帧荧光图像所对应的行为图像
 % 参数说明：Fluo_Seq为荧光图像序列文件名结构体，Fluo_CaliTime为荧光图像时间标定序列文件名结构体
@@ -51,15 +50,15 @@ for i=1:Num
 end
 
 sync_struc.sync_name = sync_names;
-sync_struc.index = sync_index;
-sync_struc.fluo_time = Fluo_Seq.image_time - Fluo_CaliTime;
-sync_struc.beha_time = behavior_time_calibrated(sync_index) - sync_struc.fluo_time(1);
-sync_struc.fluo_time = sync_struc.fluo_time - sync_struc.fluo_time(1);
-
-% make the time be positive
-if (sync_struc.beha_time(1) < 0)
-    sync_struc.fluo_time = sync_struc.fluo_time - sync_struc.beha_time(1);
-    sync_struc.beha_time = sync_struc.beha_time - sync_struc.beha_time(1);
-end
+sync_struc.beha_index = sync_index;
+% sync_struc.fluo_time = Fluo_Seq.image_time - Fluo_CaliTime;
+% sync_struc.beha_time = behavior_time_calibrated(sync_index) - sync_struc.fluo_time(1);
+% sync_struc.fluo_time = sync_struc.fluo_time - sync_struc.fluo_time(1);
+% 
+% % make the time be positive
+% if (sync_struc.beha_time(1) < 0)
+%      sync_struc.fluo_time = sync_struc.fluo_time - sync_struc.beha_time(1);
+%      sync_struc.beha_time = sync_struc.beha_time - sync_struc.beha_time(1);
+% end
 
 end

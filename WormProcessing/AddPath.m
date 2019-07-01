@@ -1,4 +1,4 @@
 % Add path into MatLab
 
 addpath( genpath('common') );
-addpath( genpath('post-processing') );
+% addpath( genpath('post-processing') );

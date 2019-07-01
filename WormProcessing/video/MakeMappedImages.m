@@ -7,11 +7,8 @@ function MakeMappedImages(Folder, GCaMP_map_range,RFP_map_range,frame_seq)
 % RFP_map_range: data range when mapping 16-bit image into 8-bit image
 
 image_format = '.tiff';
-Src_Folder = 'M:\FluoImages\';
-Deconved_Folder = 'M:\Deconved\';
-
-GCaMP_Folder = [Src_Folder Folder 'GCaMP\'];
-RFP_Folder = [Src_Folder Folder 'RFP\'];
+GCaMP_Folder = [Folder 'GCaMP\'];
+RFP_Folder = [Folder 'RFP\'];
 GCaMP_Images_Seq = GetImageSeq(GCaMP_Folder,image_format);
 RFP_Images_Seq = GetImageSeq(RFP_Folder,image_format);
 sync_struc = SyncImageGroups(GCaMP_Images_Seq,RFP_Images_Seq);
@@ -23,13 +20,13 @@ if strcmp(frame_seq, 'all') == 1
 end
 
 % Set GCaMP/RFP Map Folder
-GCaMP_Map_Folder = [Src_Folder Folder 'GCaMP_Map'];
+GCaMP_Map_Folder = [Folder 'GCaMP_Map'];
 if ~exist(GCaMP_Map_Folder,'dir')
     mkdir(GCaMP_Map_Folder);
 end
 GCaMP_Map_Folder = [GCaMP_Map_Folder '\'];
 
-RFP_Map_Folder =  [Src_Folder Folder 'RFP_Map'];
+RFP_Map_Folder =  [Folder 'RFP_Map'];
 if ~exist(RFP_Map_Folder,'dir')
     mkdir(RFP_Map_Folder);
 end

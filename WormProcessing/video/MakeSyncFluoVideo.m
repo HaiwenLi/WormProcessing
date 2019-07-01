@@ -9,14 +9,14 @@ function MakeSyncFluoVideo(Folder, GCaMP_map_range, RFP_map_range, frame_seq, fr
 % video_name: output name of the fluorescent video
 
 image_format = '.tiff';
-Src_Folder = '';%'H:\FluoImages\';
-Deconved_Folder = 'L:\Deconved\';
+GCaMP_Folder = [Folder 'GCaMP\'];
+RFP_Folder = [Folder 'RFP\'];
+% GCaMP_Images_Seq = GetImageSeq(GCaMP_Folder,image_format);
+% RFP_Images_Seq = GetImageSeq(RFP_Folder,image_format);
+% sync_struc = SyncImageGroups(GCaMP_Images_Seq,RFP_Images_Seq);
+sync_data = load([Folder 'sync_struc.mat']);
 
-GCaMP_Folder = [Src_Folder Folder 'GCaMP\'];
-RFP_Folder = [Src_Folder Folder 'RFP\'];
-GCaMP_Images_Seq = GetImageSeq(GCaMP_Folder,image_format);
-RFP_Images_Seq = GetImageSeq(RFP_Folder,image_format);
-sync_struc = SyncImageGroups(GCaMP_Images_Seq,RFP_Images_Seq);
+sync_struc = sync_data.sync_struc;
 sync_names = sync_struc.sync_names;
 match_index = sync_struc.match_index;
 
@@ -25,24 +25,24 @@ if strcmp(frame_seq, 'all') == 1
 end
 
 % Set GCaMP/RFP Map Folder
-GCaMP_Map_Folder = [Src_Folder Folder 'GCaMP_Map'];
+GCaMP_Map_Folder = [Folder 'GCaMP_Map'];
 if ~exist(GCaMP_Map_Folder,'dir')
     mkdir(GCaMP_Map_Folder);
 end
 GCaMP_Map_Folder = [GCaMP_Map_Folder '\'];
 
-RFP_Map_Folder =  [Src_Folder Folder 'RFP_Map'];
+RFP_Map_Folder =  [Folder 'RFP_Map'];
 if ~exist(RFP_Map_Folder,'dir')
     mkdir(RFP_Map_Folder);
 end
 RFP_Map_Folder = [RFP_Map_Folder '\'];
-need_map_gcamp = 1;
-need_map_rfp = 1;
+need_map_gcamp = 0;
+need_map_rfp = 0;
 
 % Start to produce the video
 writerObj = VideoWriter([video_name '.avi']);
 writerObj.FrameRate = frame_rate;
-writerObj.Quality = 90;
+% writerObj.Quality = 90;
 open(writerObj);
 
 total_num = length(frame_seq);
@@ -95,6 +95,6 @@ for i=1:length(frame_seq)
 end
 close(writerObj);
 
-% Convert video into MP4 format
-ConvertAVIToMP4([video_name '.avi']);
+% % Convert video into MP4 format
+% ConvertAVIToMP4([video_name '.avi']);
 end

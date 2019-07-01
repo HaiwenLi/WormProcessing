@@ -1,8 +1,8 @@
-function UpdateCenterline_ByHand(Folder)
+function update_index = UpdateCenterline_ByHand(Folder)
 % Update curve (may be centerline, boundary), new curve are determined by hand
 % Hint: Be carefully with the index of image and centerline!!!
 
-Partition_Num = 49;
+Partition_Num = 150;
 
 Curve_Folder = [Folder 'centerline\'];
 Check_Folder = [Folder 'error\'];
@@ -13,6 +13,8 @@ image_time = Image_Seq.image_time;
 Seq = GetImageSeq(Check_Folder,'.txt');
 seq_index = Seq.image_time;
 curve_prefix = Seq.image_name_prefix;
+
+update_index = zeros(1,length(seq_index));
 
 for i=1:length(seq_index)
     curve_index = seq_index(i);
@@ -29,11 +31,15 @@ for i=1:length(seq_index)
     
     % load(curve_file);
     % default is centerline
-    centerline = new_curve;
+    res.centerline = new_curve;
     
     % Save the curve
     index = find(curve_index == image_time);
-    out_file = [Curve_Folder num2str(index) '.mat'];
-    save(out_file,'centerline');
+    update_index(i) = index;
+    
+    %out_file = [Curve_Folder num2str(index) '.mat'];
+    out_file = [Curve_Folder curve_prefix num2str(curve_index) '.mat'];
+    save(out_file,'res');
 end
+
 end

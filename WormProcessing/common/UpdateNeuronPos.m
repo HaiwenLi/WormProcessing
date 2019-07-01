@@ -1,14 +1,14 @@
 function [xnext,ynext] = UpdateNeuronPos(xprev,yprev,search_interval,Intensity_Ratio,Wimage)
 % Update the neuron position by its centroid
 
-Cx = zeros(1,search_interval*search_interval);
-Cy = zeros(1,search_interval*search_interval);
-Ci = zeros(1,search_interval*search_interval);
+Cx = zeros(1,ceil(search_interval*search_interval));
+Cy = zeros(1,ceil(search_interval*search_interval));
+Ci = zeros(1,ceil(search_interval*search_interval));
 
 k = 0;
 for x=(xprev-search_interval):(xprev+search_interval)
     for y=(yprev-search_interval):(yprev+search_interval)
-         if (x-xprev)^2+(y-yprev)^2 <= (search_interval+1)^2
+         if (x-xprev)^2+(y-yprev)^2 <= search_interval^2
             k = k+1;
             Cx(k) = max(1, int32(x));
             Cy(k) = max(1, int32(y));
@@ -17,22 +17,11 @@ for x=(xprev-search_interval):(xprev+search_interval)
     end
 end
 Pixels_Num = k; % number of pixels in search region (circle with radius search interval)
-
-sort_Ic = sort(Ci,'descend');
-Threshold = mean(sort_Ic(1:int32(Pixels_Num*Intensity_Ratio)));% intensity threshold for extracting anchor neuron
-UpCx = Cx(1:Pixels_Num);
-UpCy = Cy(1:Pixels_Num);
-UpCi = Ci(1:Pixels_Num);
-expected_pixel_list = (UpCi >= Threshold);
-
-% Update UpAx, UpAy and UpIa
-UpCx = double(UpCx(expected_pixel_list));
-UpCy = double(UpCy(expected_pixel_list));
-UpCi = double(UpCi(expected_pixel_list));
-
-if isempty(find(UpCi>0))
-    UpCi = UpCi + 1;
-end
+expected_pixel_num = ceil(Pixels_Num*Intensity_Ratio);
+[sort_Ci, IDx] = sort(Ci(1:Pixels_Num),'descend');
+UpCx = Cx(IDx(1:expected_pixel_num));
+UpCy = Cy(IDx(1:expected_pixel_num));
+UpCi = sort_Ci(1:expected_pixel_num);
 
 % Update center of mass
 UpIc_Energy = sum(UpCi);
